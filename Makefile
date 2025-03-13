@@ -6,11 +6,12 @@
 #    By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/10 15:27:07 by lbellmas          #+#    #+#              #
-#    Updated: 2025/03/11 10:43:22 by lbellmas         ###   ########.fr        #
+#    Updated: 2025/03/13 13:06:14 by lbellmas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME       = pipex
+BONUS		= pipex_bonus
 AR         = ar
 ARFLAGS    = -rcs
 CC         = cc
@@ -19,9 +20,11 @@ OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios
 SRCDIR     = src
+BSRCDIR		= bonus
 UTILSDIR   = utils
 DEPDIR     = deps
 OBJDIR     = objs
+BOBJDIR		= bonus_obj
 OBJ_GETDIR = objs/get_next_line
 PRINTFDIR  = printf
 GETDIR     = get_next_line
@@ -31,12 +34,14 @@ LIBGET     = $(GETDIR)/get_next_line_bonus.h
 LIB        = header/ft_pipex.h
 
 # Archivos fuente
-SRC        = ft_parsing.c
+SRC        = ft_parsing.c ft_process.c
+BSRC		= 
 UTILS      =  # Definir los archivos fuente de utils si los hay
 GET        = get_next_line_bonus.c get_next_line_utils_bonus.c
 
 # Archivos de objetos
 OBJS       = $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
+BOBOJ		= $(addprefix $(BOBJDIR)/, $(BSRC:.c=.o))
 OBJS_GET   = $(addprefix $(OBJ_GETDIR)/, $(GET:.c=.o))
 DEPS       = $(addprefix $(DEPDIR)/, $(SRC:.c=.d) $(UTILS:.c=.d) $(GET:.c=.d))
 
@@ -45,7 +50,7 @@ LIBPRINTF  = $(PRINTFDIR)/libftprintf.a
 
 # Archivo principal
 MAIN       = ft_pipex.c
-
+BMAIN		= ft_pipex_bonus.c
 # Colores
 RED        = \033[0;31m
 GREEN      = \033[0;32m
@@ -62,6 +67,11 @@ all: $(LIBPRINTF) $(NAME) $(LIB) $(LIBGET) Makefile
 
 # Compilación de archivos fuente generales
 $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c Makefile | $(OBJDIR) $(DEPDIR)
+	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
+	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
+	@mv $(OBJDIR)/*.d $(DEPDIR)
+
+$(BOBJ): $(BOBJDIR)/%.o : $(BSRCDIR)/%.c Makefile | $(BOBJDIR) $(DEPDIR)
 	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
 	@$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 	@mv $(OBJDIR)/*.d $(DEPDIR)
@@ -92,6 +102,12 @@ $(NAME): $(MAIN) $(OBJS) $(OBJS_GET) $(LIBPRINTF)
 	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
 	@$(CC) $(CFLAGS) $(MAIN) $(OBJS) $(LIBPRINTF) $(OBJS_GET) -o $(NAME)
 
+bonus: $(BONUS) $(LIBPRINTF) $(LIB) $(LIBGET) Makefile
+
+$(BONUS): $(BMAIN) $(BOBJ) $(OBJS) $(OBJS_GET) $(LIBPRINTF)
+	@printf "%-42b%b" "$(PURPLE)$<:" "$(BLUE)$(@F)$(RESET)\n"
+	@$(CC) $(CFLAGS) $(BMAIN) $(BOBJ) $(OBJS) $(LIBPRINTF) $(OBJS_GET) -o $(BONUS)
+
 # Limpiar objetos y dependencias
 clean:
 	@printf "%b" "$(BLUE)Cleaning objects...$(RESET)\n"
@@ -104,6 +120,7 @@ clean:
 fclean: clean
 	@printf "%b" "$(BLUE)Cleaning all files...$(RESET)\n"
 	@rm -f $(NAME)
+	@rm -rf $(BONUS)
 	@$(MAKE) -C $(PRINTFDIR) fclean --silent
 
 # Reconstrucción total
