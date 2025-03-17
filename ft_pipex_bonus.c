@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 10:07:40 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/13 13:26:13 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/17 16:29:52 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,5 +96,4 @@ int	main(int argc, char **argv, char **env)
 	if (ft_child(pipex->pipe[0][0], pipex->docs[1], pipex, env) == 0)
 		return (1);
 	ft_end(pipex);
-
 }

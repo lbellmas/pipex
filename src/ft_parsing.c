@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 15:22:47 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/13 16:24:03 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/17 16:07:18 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,12 @@ t_pipex	*ft_parsing(char **argv, int argc)
 	pipex = (t_pipex *)malloc(sizeof(t_pipex));
 	pipex->docs[0] = open(argv[1], O_RDONLY);
 	pipex->docs[1] = open(argv[argc - 1], O_WRONLY);
+	pipex->path = NULL;
+	pipex->command = NULL;
+	pipex->pipe[0][0] = 0;
+	pipex->pipe[0][1] = 0;
+	pipex->pipe[1][0] = 0;
+	pipex->pipe[1][1] = 0;
 	return (pipex);
 }
 
@@ -57,6 +63,14 @@ void	ft_clear_split(char **str)
 		p++;
 	}
 	free(str);
+	str = NULL;
+}
+
+static int	ft_good_path(char *path, t_pipex **pipex, char **split, int p)
+{
+	free(path);
+	(*pipex)->path = ft_strdup(split[p]);
+	return (ft_clear_split(split), 1);
 }
 
 int	ft_path(char **env, t_pipex **pipex, char *cmd)
@@ -68,6 +82,8 @@ int	ft_path(char **env, t_pipex **pipex, char *cmd)
 
 	if (!env || !*env)
 		return (0);
+	if ((*pipex)->path)
+		free((*pipex)->path);
 	split = ft_split(ft_find_path(env), ':');
 	if (!split)
 		return (0);
@@ -76,15 +92,10 @@ int	ft_path(char **env, t_pipex **pipex, char *cmd)
 	{
 		temp = ft_strjoin("/", cmd);
 		path = ft_strjoin(split[p], temp);
-		if (access(path, X_OK) == 0)
-		{
-			free(path);
-			free(temp);
-			(*pipex)->path = ft_strdup(split[p]);
-			return (ft_clear_split(split), 1);
-		}
-		free(path);
 		free(temp);
+		if (access(path, X_OK) == 0)
+			return (ft_good_path(path, pipex, split, p));
+		free(path);
 		p++;
 	}
 	return (ft_clear_split(split), 0);

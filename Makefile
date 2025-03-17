@@ -6,7 +6,7 @@
 #    By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/10 15:27:07 by lbellmas          #+#    #+#              #
-#    Updated: 2025/03/13 13:06:14 by lbellmas         ###   ########.fr        #
+#    Updated: 2025/03/17 11:49:26 by lbellmas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ BONUS		= pipex_bonus
 AR         = ar
 ARFLAGS    = -rcs
 CC         = cc
-CFLAGS     = -Wall -Wextra -Werror -g
+CFLAGS     = -Wall -Wextra -Werror -g #-fsanitize=address
 OFLAGS     = -MMD -MF $(@:.o=.d)
 
 # Directorios

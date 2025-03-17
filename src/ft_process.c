@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 10:04:00 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/13 13:47:49 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/17 12:28:38 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,23 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+static char	**ft_free_executor(t_pipex **pipex)
+{
+	char	**return_v;
+
+	if ((*pipex)->path)
+		free((*pipex)->path);
+	return_v = (*pipex)->command;
+	free(*pipex);
+	*pipex = NULL;
+	return (return_v);
+}
+
 int	ft_executor(int read, int write, t_pipex *pipex, char **env)
 {
-	char *temp;
-	char *path_command;
+	char	*temp;
+	char	*path_command;
+	char	**command;
 
 	dup2(read, 0);
 	dup2(write, 1);
@@ -36,9 +49,8 @@ int	ft_executor(int read, int write, t_pipex *pipex, char **env)
 	temp = ft_strjoin("/", pipex->command[0]);
 	path_command = ft_strjoin(pipex->path, temp);
 	free(temp);
-	execve(path_command, pipex->command, env);
-//	execve(ft_strjoin(pipex->path,
-//			ft_strjoin("/", pipex->command[0])), pipex->command, env);
+	command = ft_free_executor(&pipex);
+	execve(path_command, command, env);
 	perror("error execve1\n");
 	return (0);
 }
