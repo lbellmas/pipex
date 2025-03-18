@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 10:04:00 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/17 12:28:38 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/18 16:22:06 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ int	ft_executor(int read, int write, t_pipex *pipex, char **env)
 	char	*path_command;
 	char	**command;
 
-	dup2(read, 0);
+	if (read != 0)
+		dup2(read, 0);
 	dup2(write, 1);
 	if (pipex->pipe[0][0] != read)
 		close(pipex->pipe[0][0]);
@@ -45,7 +46,8 @@ int	ft_executor(int read, int write, t_pipex *pipex, char **env)
 	if (pipex->pipe[1][1] != write && pipex->pipe[1][1] != 0)
 		close(pipex->pipe[1][1]);
 	close(write);
-	close(read);
+	if (read != 0)
+		close(read);
 	temp = ft_strjoin("/", pipex->command[0]);
 	path_command = ft_strjoin(pipex->path, temp);
 	free(temp);
@@ -65,5 +67,20 @@ int	ft_child(int read, int write, t_pipex *pipex, char **env)
 		if (ft_executor(read, write, pipex, env) == 0)
 			return (0);
 	}
+	pipex->p = pipex->p + 1;
 	return (1);
+}
+
+void	ft_clear_split(char **str)
+{
+	int	p;
+
+	p = 0;
+	while (str[p])
+	{
+		free(str[p]);
+		p++;
+	}
+	free(str);
+	str = NULL;
 }

@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 14:55:34 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/17 15:23:05 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/18 16:10:54 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ static void	ft_free_pipex(t_pipex *pipex)
 
 static void	ft_end(t_pipex *pipex)
 {
+	if (!pipex)
+		return ;
 	if (pipex->pipe[0][0] != 0)
 		close(pipex->pipe[0][0]);
 	if (pipex->pipe[0][1] != 0)
@@ -57,14 +59,12 @@ int	main(int argc, char **argv, char **env)
 {
 	t_pipex	*pipex;
 
-	if (argc < 4)
+	if (argc != 5)
 		return (ft_printf("error args\n"), 1);
 	pipex = ft_parsing(argv, argc);
 	if (!pipex)
 		return (ft_end(pipex), 1);
-	pipex->command = ft_split(argv[2], ' ');
-	if (!pipex->command)
-		return (perror("falta comando\n"), 1);
+	pipex->command = ft_split(argv[pipex->p], ' ');
 	if (ft_path(env, &pipex, *pipex->command) == 0)
 		return (ft_end(pipex), ft_printf("error searching path\n"));
 	if (pipe(pipex->pipe[0]) == -1)
@@ -73,11 +73,10 @@ int	main(int argc, char **argv, char **env)
 		return (ft_end(pipex), 1);
 	waitpid(pipex->pid, NULL, 0);
 	ft_clear_split(pipex->command);
-	pipex->command = ft_split(argv[3], ' ');
+	pipex->command = ft_split(argv[pipex->p], ' ');
 	if (ft_path(env, &pipex, pipex->command[0]) == 0)
 		return (ft_end(pipex), ft_printf("error searching path2\n"));
 	if (ft_child(pipex->pipe[0][0], pipex->docs[1], pipex, env) == 0)
 		return (ft_end(pipex), 1);
-	ft_end(pipex);
-	return (0);
+	return (ft_end(pipex), 0);
 }

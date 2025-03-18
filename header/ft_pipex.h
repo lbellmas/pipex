@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 11:45:57 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/17 16:27:15 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/18 15:03:56 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 typedef struct s_pipex
 {
+	int			p;
 	int			docs[2];
 	int			pipe[2][2];
 	int			pid;

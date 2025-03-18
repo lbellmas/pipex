@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 10:07:40 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/17 16:29:52 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/18 16:21:02 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,16 +47,13 @@ static void	ft_end(t_pipex *pipex)
 
 int	ft_loop(t_pipex *pipex, char **env, int argc, char **argv)
 {
-	int	p;
-
-	p = 0;
-	while (p < argc - 5)
+	while (pipex->p < argc - 2)
 	{
 		wait(NULL);
 		ft_clear_split(pipex->command);
-		pipex->command = ft_split(argv[p], ' ');
+		pipex->command = ft_split(argv[pipex->p], ' ');
 		if (ft_path(env, &pipex, pipex->command[0]) == 0)
-			return (perror("error searching path\n"), 0);
+			return (ft_printf("error searching path\n"), 0);
 		if (pipe(pipex->pipe[1]) == -1)
 			return (perror("error opening pipe\n"), 0);
 		if (ft_child(pipex->pipe[0][0], pipex->pipe[1][1], pipex, env) == 0)
@@ -65,7 +62,7 @@ int	ft_loop(t_pipex *pipex, char **env, int argc, char **argv)
 		close(pipex->pipe[0][1]);
 		pipex->pipe[0][0] = pipex->pipe[1][0];
 		pipex->pipe[0][1] = pipex->pipe[1][1];
-		p++;
+		pipex->p++;
 	}
 	return (1);
 }
@@ -74,19 +71,18 @@ int	main(int argc, char **argv, char **env)
 {
 	t_pipex	*pipex;
 
-	if (argc < 4)
+	if (argc < 5)
 		return (perror("error args\n"), 1);
 	pipex = ft_parsing(argv, argc);
 	if (!pipex)
 		return (1);
-	pipex->command = ft_split(argv[2], ' ');
+	pipex->command = ft_split(argv[pipex->p], ' ');
 	if (ft_path(env, &pipex, pipex->command[0]) == 0)
-		return (ft_printf("error searching path\n", 1));
+		return (ft_printf("error searching path\n"));
 	if (pipe(pipex->pipe[0]) == -1)
 		return (ft_printf("error opening pipe\n"), 1);
-	if (ft_child(pipex->docs[0], pipex->pipe[0][1], pipex, env) == 0)
-		return (1);
-	if (ft_loop(pipex, env, argc, argv + 3) == 0)
+	if (ft_child(pipex->docs[0], pipex->pipe[0][1], pipex, env) == 0 ||
+			(ft_loop(pipex, env, argc, argv) == 0))
 		return (1);
 	wait(NULL);
 	ft_clear_split(pipex->command);
@@ -95,5 +91,7 @@ int	main(int argc, char **argv, char **env)
 		return (ft_printf("error searching path2\n", 1));
 	if (ft_child(pipex->pipe[0][0], pipex->docs[1], pipex, env) == 0)
 		return (1);
-	ft_end(pipex);
+	if (ft_strncmp(argv[1], "here_doc", ft_strlen("here_doc")) == 0)
+		unlink(argv[1]);
+	return (ft_end(pipex), 0);
 }

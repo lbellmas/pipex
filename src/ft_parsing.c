@@ -6,27 +6,55 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 15:22:47 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/17 16:07:18 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/18 16:22:35 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../get_next_line/get_next_line_bonus.h"
 #include "../printf/header/ft_printf.h"
 #include "../header/ft_pipex.h"
 #include <fcntl.h>
+
+static int	ft_heredoc(char **argv)
+{
+	char	*str;
+	int		temp;
+
+	open(argv[1], O_CREAT, 0777);
+	temp = open(argv[1], O_WRONLY);
+	str = get_next_line(0);
+	while (str && !(ft_strncmp(str, argv[2],
+				ft_strlen(argv[2])) == 0 && str[ft_strlen(argv[2])] == '\n'))
+	{
+		if (write(temp, str, ft_strlen(str)) == -1)
+			return (ft_printf("error en el heredoc\n"), -1);
+		free(str);
+		str = get_next_line(0);
+	}
+	if (str)
+		free(str);
+	close(temp);
+	return (3);
+}
 
 t_pipex	*ft_parsing(char **argv, int argc)
 {
 	t_pipex	*pipex;
 
+	pipex = (t_pipex *)malloc(sizeof(t_pipex));
+	pipex->p = 2;
+	if (ft_strncmp("here_doc", argv[1], 10) == 0 && argc > 5)
+		pipex->p = ft_heredoc(argv);
+	if (pipex->p == -1)
+		return (free(pipex), NULL);
 	if (access(argv[1], F_OK) != 0)
-		return ((ft_printf("no existe\n")), NULL);
+		return (free(pipex), (ft_printf("no existe el archivo\n")), NULL);
 	if (access(argv[1], R_OK) != 0)
-		return ((ft_printf("no se puede leer\n")), NULL);
+		return (free(pipex), (ft_printf("no se puede leer\n")), NULL);
 	if (access(argv[argc - 1], F_OK) != 0)
 		open(argv[argc - 1], O_CREAT, 0777);
 	if (access(argv[argc - 1], W_OK) != 0)
-		return ((ft_printf("no se puede escribir\n")), NULL);
-	pipex = (t_pipex *)malloc(sizeof(t_pipex));
+		return (free(pipex), (ft_printf("no se puede escribir\n")), NULL);
 	pipex->docs[0] = open(argv[1], O_RDONLY);
 	pipex->docs[1] = open(argv[argc - 1], O_WRONLY);
 	pipex->path = NULL;
@@ -50,20 +78,6 @@ char	*ft_find_path(char **env)
 		p++;
 	}
 	return (NULL);
-}
-
-void	ft_clear_split(char **str)
-{
-	int	p;
-
-	p = 0;
-	while (str[p])
-	{
-		free(str[p]);
-		p++;
-	}
-	free(str);
-	str = NULL;
 }
 
 static int	ft_good_path(char *path, t_pipex **pipex, char **split, int p)
