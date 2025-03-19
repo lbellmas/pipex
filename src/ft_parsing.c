@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 15:22:47 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/19 15:59:03 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/19 16:24:21 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static int	ft_heredoc(char **argv)
 				ft_strlen(argv[2])) == 0 && str[ft_strlen(argv[2])] == '\n'))
 	{
 		if (write(temp, str, ft_strlen(str)) == -1)
-			return (ft_printf("error en el heredoc\n"), -1);
+			return (ft_printf("error in heredoc\n"), -1);
 		free(str);
 		str = get_next_line(0);
 	}
@@ -47,14 +47,14 @@ t_pipex	*ft_parsing(char **argv, int argc)
 		pipex->p = ft_heredoc(argv);
 	if (pipex->p == -1)
 		return (free(pipex), NULL);
-	if (access(argv[1], F_OK) != 0)
-		return (free(pipex), (ft_printf("no existe el archivo\n")), NULL);
-	if (access(argv[1], R_OK) != 0)
-		return (free(pipex), (ft_printf("no se puede leer\n")), NULL);
+	if (access(argv[argc - 1], W_OK) != 0)
+		return (free(pipex), (ft_printf("no permissions to write\n")), NULL);
 	if (access(argv[argc - 1], F_OK) != 0)
 		open(argv[argc - 1], O_CREAT, 0777);
-	if (access(argv[argc - 1], W_OK) != 0)
-		return (free(pipex), (ft_printf("no se puede escribir\n")), NULL);
+	if (access(argv[1], F_OK) != 0)
+		return (free(pipex), (ft_printf("the file does not exist\n")), NULL);
+	if (access(argv[1], R_OK) != 0)
+		return (free(pipex), (ft_printf("no permissions to read\n")), NULL);
 	pipex->docs[0] = open(argv[1], O_RDONLY);
 	pipex->docs[1] = open(argv[argc - 1], O_WRONLY);
 	pipex->path = NULL;

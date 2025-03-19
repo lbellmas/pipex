@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 14:55:34 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/18 16:10:54 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/19 16:24:37 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	main(int argc, char **argv, char **env)
 	ft_clear_split(pipex->command);
 	pipex->command = ft_split(argv[pipex->p], ' ');
 	if (ft_path(env, &pipex, pipex->command[0]) == 0)
-		return (ft_end(pipex), ft_printf("error searching path2\n"));
+		return (ft_end(pipex), ft_printf("error searching path\n"));
 	if (ft_child(pipex->pipe[0][0], pipex->docs[1], pipex, env) == 0)
 		return (ft_end(pipex), 1);
 	return (ft_end(pipex), 0);
