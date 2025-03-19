@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 10:07:40 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/18 16:21:02 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/19 15:59:27 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ int	ft_loop(t_pipex *pipex, char **env, int argc, char **argv)
 		close(pipex->pipe[0][1]);
 		pipex->pipe[0][0] = pipex->pipe[1][0];
 		pipex->pipe[0][1] = pipex->pipe[1][1];
-		pipex->p++;
 	}
 	return (1);
 }

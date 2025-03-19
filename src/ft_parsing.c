@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 15:22:47 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/18 16:22:35 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/19 15:59:03 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,5 +112,6 @@ int	ft_path(char **env, t_pipex **pipex, char *cmd)
 		free(path);
 		p++;
 	}
+	(*pipex)->path = NULL;
 	return (ft_clear_split(split), 0);
 }
