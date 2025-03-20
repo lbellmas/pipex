@@ -6,7 +6,7 @@
 /*   By: lbellmas <lbellmas@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 15:22:47 by lbellmas          #+#    #+#             */
-/*   Updated: 2025/03/19 16:24:21 by lbellmas         ###   ########.fr       */
+/*   Updated: 2025/03/20 15:22:07 by lbellmas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,10 @@ t_pipex	*ft_parsing(char **argv, int argc)
 		pipex->p = ft_heredoc(argv);
 	if (pipex->p == -1)
 		return (free(pipex), NULL);
-	if (access(argv[argc - 1], W_OK) != 0)
-		return (free(pipex), (ft_printf("no permissions to write\n")), NULL);
 	if (access(argv[argc - 1], F_OK) != 0)
 		open(argv[argc - 1], O_CREAT, 0777);
+	if (access(argv[argc - 1], W_OK) != 0)
+		return (free(pipex), (ft_printf("no permissions to write\n")), NULL);
 	if (access(argv[1], F_OK) != 0)
 		return (free(pipex), (ft_printf("the file does not exist\n")), NULL);
 	if (access(argv[1], R_OK) != 0)
